@@ -6,7 +6,13 @@ load('ridges_1.mat');
 load('ridges_2.mat');
 
 %rigid transformation
-%ynew=PointSetRegistration(xground,yground,1);
+ynew=PointSetRegistration(xground,yground,1);
+
+X = [1, 0; 0, 1];
+Y = [1, 0; 0, 0; 0, 1];
+Y = X;
+ynew = PointSetRegistration(X, Y, 1);
+
 
 % alpha=25;
 % Rot=[1,0,0;0,cos(alpha),-sin(alpha);0,sin(alpha),cos(alpha)];
