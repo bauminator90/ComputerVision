@@ -40,7 +40,7 @@ switch opt
         G=zeros(M,M);
         for i=1:M
             for j=1:M
-                G(i,j)=exp(-1/(2*beta^2)*norm(Y(i,:)-Y(j,:))^2)
+                G(i,j)=exp(-1/(2*beta^2)*norm(Y(i,:)-Y(j,:))^2);
             end
         end
                 

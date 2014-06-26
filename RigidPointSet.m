@@ -13,7 +13,7 @@ function [NewPoints,R,s,t]=RigidPointSet(X,Y,D,M,N,R,s,t,sig,w)
         P = exp(-P/(2*sig));
         % The denominator is specific to each column. Sum over the rows.
         % Add constant term
-        denom = sum(P,2) + (s*pi*sig)^(D/2)*w/(1-w)*M/N;
+        denom = sum(P,2) + (2*pi*sig)^(D/2)*w/(1-w)*M/N;
         assert(length(denom) == N);
         % Divide each column by the denominator for that column.
         P = bsxfun(@rdivide, P, denom);

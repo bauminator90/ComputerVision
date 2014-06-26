@@ -8,7 +8,7 @@ load('ridges_2.mat');
 % % AFFINE TEST
 % X = [1, 0 ; 0, 1];
 % Y = [2, 1 ; 0, 3];
-% [ynew,R,s,t] = PointSetRegistration(X, Y, 2);
+% [ynew] = PointSetRegistration(X, Y, 3);
 % 
 % figure;
 % hold on;
@@ -24,7 +24,7 @@ load('ridges_2.mat');
 
 
 
-% % AFFINE TEST Image
+% AFFINE TEST Image
 xground=xground(3:10:2996,:);
 yground=yground(3:10:2996,:);
 
@@ -35,7 +35,7 @@ hold on;
 plot(yground(:,1),yground(:,2),'.g');
 
 
-ynew=PointSetRegistration(xground,yground,2);
+ynew=PointSetRegistration(xground,yground,3);
 figure;
 hold on;
 plot(xground(:,1),xground(:,2),'.r');
