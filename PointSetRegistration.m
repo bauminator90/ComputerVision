@@ -16,14 +16,6 @@ M=size(Y,1);
 R=eye(D);
 t=zeros(1,D);
 s=1;
-w=0.5;
-sig=0;
-for n=1:N
-    for m=1:M
-        sig=sig+norm(X(n,:)-Y(m,:))^2;
-    end
-end
-sig=1/(D*N*M)*sig;
 
 
 
@@ -46,3 +38,11 @@ switch opt
                 
         [NewPoints,G,W]=NonRigidPointSet(X,Y,D,M,N,sig,w,W,G,alpha);
 end
+w=0.5;
+
+A = sum(X .* X, 2);
+B = -2*X*Y';
+C = sum(Y .* Y, 2);
+sig = bsxfun(@plus, A, B);
+sig = bsxfun(@plus, C', sig);
+sig = sum(sig(:)) / (D*N*M);
