@@ -10,14 +10,10 @@ function [NewPoints,par1,par2,par3]=PointSetRegistration(X,Y,opt)
 
 %Initialization
 
+w=0.5;
 D=size(X,2);
 N=size(X,1);
 M=size(Y,1);
-R=eye(D);
-t=zeros(1,D);
-s=1;
-
-w=0.5;
 
 A = sum(X .* X, 2);
 B = -2*X*Y';
@@ -26,11 +22,17 @@ sig = bsxfun(@plus, A, B);
 sig = bsxfun(@plus, C', sig);
 sig = sum(sig(:)) / (D*N*M);
 
+R=eye(D);
+t=zeros(1,D);
+s=1;
+
+
+
 switch opt
     case 1
-        [NewPoints,R,s,t]=RigidPointSet(X,Y,D,M,N,R,s,t,sig,w);
+        [NewPoints,par1,par2,par3]=RigidPointSet(X,Y,D,M,N,R,s,t,sig,w);
     case 2
-        [NewPoints,B,s,t]=AffinePointSet(X,Y,D,M,N,R,t,sig,w);
+        [NewPoints,par1,par2,par3]=AffinePointSet(X,Y,D,M,N,R,t,sig,w);
     case 3
         %Initialization only used in this case:
         W=zeros(M,D);
@@ -39,7 +41,7 @@ switch opt
         G=zeros(M,M);
         for i=1:M
             for j=1:M
-                G(i,j)=exp(-1/(2*beta^2)*norm(Y(i,:)-Y(j,:))^2)
+                G(i,j)=exp(-1/(2*beta^2)*norm(Y(i,:)-Y(j,:))^2);
             end
         end
                 

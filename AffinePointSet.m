@@ -2,23 +2,23 @@ function [NewPoints,B,s,t]=AffinePointSet(X,Y,D,M,N,B,t,sig,w)
     NewPoints=ones(N,D);
     s=1;
     
-    %ist das gut?
-    while norm(NewPoints-X)>0.2
-        
+    iter=0;
+       
+    while (iter<1000) & (abs(sig)>10*eps)
+        iter=iter+1;
         %E-Step:
-        P=zeros(M,N);
-        for m=1:M
-            for n=1:N
-                den=0;
-                for k=1:M
-                   den=den+exp(-1/(2*sig)*(norm(X(n,:)-(((B*Y(k,:)')')+t))^2));
-                   den=den+(2*pi*sig)^(D/2)*w/(1-w)*M/N;
-                end
-                
-                                
-                P(m,n)= exp(-1/(2*sig)*(norm(X(n,:)-(((B*Y(m,:)')')+t))^2)) / den;
-            end
-        end
+
+        % Fill P with all cominations of (x_n - sRy_m+t)^2.
+        P = pdist2(X, bsxfun(@plus, s*Y*B', t), 'euclidean') .^2;
+        % Transform every element p=exp(-1/(2*sig) * p);
+        P = exp(-P/(2*sig));
+        % The denominator is specific to each column. Sum over the rows.
+        % Add constant term
+        denom = sum(P,2) + (s*pi*sig)^(D/2)*w/(1-w)*M/N;
+        assert(length(denom) == N);
+        % Divide each column by the denominator for that column.
+        P = bsxfun(@rdivide, P, denom);
+        P=P';
         
         %M-Step:
         
@@ -31,13 +31,15 @@ function [NewPoints,B,s,t]=AffinePointSet(X,Y,D,M,N,B,t,sig,w)
         
         %compute the new rotation matrix.
         diagonal=diag(P*ones(N,1));
-        B=(X1'*P'*Y1)*(Y1'*diagonal*Y1)^-1;
         
+        C=(Y1'*diagonal*Y1);
+        B=(X1'*P'*Y1)/C;
+                
         %compute t and sig
         t=(m_x-B*m_y)';
         diagonal1=diag(P'*ones(M,1));
         sig=1/(N_P*D)*(trace(X1'*diagonal1*X1)-trace(X1'*P'*Y1*B'));
-        
+                        
         NewPoints=Y*B'+ones(M,1)*t;
     end
 end
