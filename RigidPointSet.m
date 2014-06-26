@@ -3,7 +3,6 @@ function [NewPoints,R,s,t]=RigidPointSet(X,Y,D,M,N,R,s,t,sig,w)
     iter=0;
        
     while (iter<1000) & (abs(sig)>10*eps)
-    %for i=1:100
         iter=iter+1;
               
         %E-Step:
@@ -43,7 +42,7 @@ function [NewPoints,R,s,t]=RigidPointSet(X,Y,D,M,N,R,s,t,sig,w)
         t=(m_x-s.*R*m_y)';
         sig=1/(N_P*D)*(trace(X1'*diagonal1*X1-s*trace(A'*R)));
         
-        NewPoints=s.*Y*R'+ones(M,1)*t
+        NewPoints=s.*Y*R'+ones(M,1)*t;
     end
  
 end

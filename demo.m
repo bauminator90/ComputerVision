@@ -5,20 +5,49 @@ addpath(['.' filesep 'data' filesep 'bunny' filesep 'data']);
 load('ridges_1.mat');
 load('ridges_2.mat');
 
-%rigid transformation
-%ynew=PointSetRegistration(xground,yground,1);
-
-X = [50, 0; 0, 3];
-Y = [50, 0; 0,3;0,3];
-%Y = X;
-[ynew,R,s,t] = PointSetRegistration(X, Y, 1);
-
-
-% alpha=25;
-% Rot=[1,0,0;0,cos(alpha),-sin(alpha);0,sin(alpha),cos(alpha)];
-% x=[1,1,1;1,2,3;4,3,6];
-% y=Rot*x+[5,19,1;5,19,1;5,19,1];
+% % AFFINE TEST
+% X = [1, 0 ; 0, 1];
+% Y = [2, 1 ; 0, 3];
+% [ynew,R,s,t] = PointSetRegistration(X, Y, 2);
 % 
-% [ynew,B,s,t]=PointSetRegistration(x,y,3);
+% figure;
+% hold on;
+% plot(X(:,1),X(:,2),'.r');
+% hold on;
+% plot(Y(:,1),Y(:,2),'.g');
+% 
+% figure;
+% hold on;
+% plot(X(:,1),X(:,2),'.r');
+% hold on;
+% plot(ynew(:,1),ynew(:,2),'.g');
+
+
+
+% % AFFINE TEST Image
+xground=xground(3:10:2996,:);
+yground=yground(3:10:2996,:);
+
+figure;
+hold on;
+plot(xground(:,1),xground(:,2),'.r');
+hold on;
+plot(yground(:,1),yground(:,2),'.g');
+
+
+ynew=PointSetRegistration(xground,yground,2);
+figure;
+hold on;
+plot(xground(:,1),xground(:,2),'.r');
+hold on;
+plot(ynew(:,1),ynew(:,2),'.g');
+
+
+
+
+
+
+
+
 
 %coord=readplyfile('bun000.ply');
