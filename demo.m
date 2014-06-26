@@ -6,12 +6,12 @@ load('ridges_1.mat');
 load('ridges_2.mat');
 
 %rigid transformation
-ynew=PointSetRegistration(xground,yground,1);
+%ynew=PointSetRegistration(xground,yground,1);
 
-X = [1, 0; 0, 1];
-Y = [1, 0; 0, 0; 0, 1];
-Y = X;
-ynew = PointSetRegistration(X, Y, 1);
+X = [50, 0; 0, 3];
+Y = [50, 0; 0,3;0,3];
+%Y = X;
+[ynew,R,s,t] = PointSetRegistration(X, Y, 1);
 
 
 % alpha=25;
@@ -21,4 +21,4 @@ ynew = PointSetRegistration(X, Y, 1);
 % 
 % [ynew,B,s,t]=PointSetRegistration(x,y,3);
 
-coord=readplyfile('bun000.ply');
+%coord=readplyfile('bun000.ply');
