@@ -2,13 +2,20 @@ function [NewPoints,R,s,t]=RigidPointSet(X,Y,D,M,N,R,s,t,sig,w)
     NewPoints=ones(N,D);
     iter=0;
        
-    while (iter<1000) & (abs(sig)>10*eps)
+    while (iter<1000) && (abs(sig)>1e-5)
         iter=iter+1;
               
         %E-Step:
 
         % Fill P with all cominations of (x_n - sRy_m+t)^2.
-        P = pdist2(X, bsxfun(@plus, s*Y*R', t), 'euclidean') .^2;
+%         P = pdist2(X, bsxfun(@plus, s*Y*R', t), 'euclidean') .^2;
+        T = bsxfun(@plus, s*R*Y', t)';
+        A = sum(X .* X, 2);
+        B = -2*X*T';
+        C = sum(T .* T, 2);
+        P = bsxfun(@plus, A, B);
+        P = bsxfun(@plus, C', P);
+
         % Transform every element p=exp(-1/(2*sig) * p);
         P = exp(-P/(2*sig));
         % The denominator is specific to each column. Sum over the rows.
@@ -30,7 +37,7 @@ function [NewPoints,R,s,t]=RigidPointSet(X,Y,D,M,N,R,s,t,sig,w)
         
         %compute the new rotation matrix.
         A=X1'*P'*Y1;
-        [U,S,V]=svd(A);
+        [U,~,V]=svd(A);
         C=eye(D);
         C(D,D)=det(U*V');
         R=U*C*V';
@@ -38,11 +45,16 @@ function [NewPoints,R,s,t]=RigidPointSet(X,Y,D,M,N,R,s,t,sig,w)
         %compute s,t and sig
         diagonal=diag(P*ones(N,1));
         diagonal1=diag(P'*ones(M,1));
-        s=trace(A'*R)/trace(Y1'*diagonal*Y1)';
-        t=(m_x-s.*R*m_y)';
-        sig=1/(N_P*D)*(trace(X1'*diagonal1*X1-s*trace(A'*R)));
+        s=trace(A'*R)/trace(Y1'*diagonal*Y1);
+        t=(m_x-s.*R*m_y);
+        sig=1/(N_P*D)*(trace(X1'*diagonal1*X1)-s*trace(A'*R));
         
-        NewPoints=s.*Y*R'+ones(M,1)*t;
+        if (sig < -1e-10)
+            fprintf('Oops, shouldn''t have happened. Sig: %f\n', sig);
+            assert(sig > 0);
+        end
+        
+        NewPoints=s.*Y*R'+ones(M,1)*t';
     end
  
 end

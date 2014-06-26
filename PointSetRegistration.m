@@ -10,7 +10,7 @@ function [NewPoints,par1,par2,par3]=PointSetRegistration(X,Y,opt)
 
 %Initialization
 
-w=0.5;
+w=0.01;
 D=size(X,2);
 N=size(X,1);
 M=size(Y,1);
@@ -23,7 +23,7 @@ sig = bsxfun(@plus, C', sig);
 sig = sum(sig(:)) / (D*N*M);
 
 R=eye(D);
-t=zeros(1,D);
+t=zeros(1,D)';
 s=1;
 
 
