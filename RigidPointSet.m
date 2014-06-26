@@ -5,20 +5,6 @@ function [NewPoints,R,s,t]=RigidPointSet(X,Y,D,M,N,R,s,t,sig,w)
     while norm(NewPoints-X)>0.2
         norm(NewPoints-X)
         
-        %E-Step:
-        P=zeros(M,N);
-        for m=1:M
-            for n=1:N
-                den=0;
-                for k=1:M
-                   den=den+exp(-1/(2*sig)*(norm(X(n,:)-(s.*((R*Y(k,:)')')+t))^2));
-                   den=den+(2*pi*sig)^(D/2)*w/(1-w)*M/N;
-                end
-                
-                                
-                P(m,n)= exp(-1/(2*sig)*(norm(X(n,:)-(s.*((R*Y(m,:)')')+t))^2)) / den;
-            end
-        end
         
         %M-Step:
         
@@ -44,4 +30,17 @@ function [NewPoints,R,s,t]=RigidPointSet(X,Y,D,M,N,R,s,t,sig,w)
         
         NewPoints=s.*Y*R'+ones(M,1)*t;
     end
+        %E-Step:
+
+        % Fill P with all cominations of (x_n - sRy_m+t)^2.
+        P = pdist2(X, bsxfun(@plus, s*Y*R', t), 'euclidean') .^2;
+        % Transform every element p=exp(-1/(2*sig) * p);
+        P = exp(-P/(2*sig));
+        % The denominator is specific to each column. Sum over the rows.
+        % Add constant term
+        denom = sum(P,2) + (s*pi*sig)^(D/2)*w/(1-w)*M/N;
+        assert(length(denom) == N);
+        % Divide each column by the denominator for that column.
+        P = bsxfun(@rdivide, P, denom);
+        
 end
