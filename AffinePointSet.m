@@ -1,20 +1,25 @@
-function [NewPoints,B,s,t]=AffinePointSet(X,Y,D,M,N,B,t,sig,w)
+function [NewPoints,B,s,t]=AffinePointSet(X,Y,D,M,N,B,t,sig2,w)
     NewPoints=ones(N,D);
     s=1;
     
     iter=0;
        
-    while (iter<1000) & (abs(sig)>10*eps)
+    while (iter<1000) & (abs(sig2)>10*eps)
         iter=iter+1;
         %E-Step:
 
         % Fill P with all cominations of (x_n - sRy_m+t)^2.
-        P = pdist2(X, bsxfun(@plus, s*Y*B', t), 'euclidean') .^2;
-        % Transform every element p=exp(-1/(2*sig) * p);
-        P = exp(-P/(2*sig));
+        T = bsxfun(@plus, s*B*Y', t)';
+        A = sum(X .* X, 2);
+        B_m = -2*X*T';
+        C = sum(T .* T, 2);
+        P = bsxfun(@plus, A, B_m);
+        P = bsxfun(@plus, C', P);
+        % Transform every element p=exp(-1/(2*sig2) * p);
+        P = exp(-P/(2*sig2));
         % The denominator is specific to each column. Sum over the rows.
         % Add constant term
-        denom = sum(P,2) + (s*pi*sig)^(D/2)*w/(1-w)*M/N;
+        denom = sum(P,2) + (2*pi*sig2)^(D/2)*w/(1-w)*M/N;
         assert(length(denom) == N);
         % Divide each column by the denominator for that column.
         P = bsxfun(@rdivide, P, denom);
@@ -35,11 +40,11 @@ function [NewPoints,B,s,t]=AffinePointSet(X,Y,D,M,N,B,t,sig,w)
         C=(Y1'*diagonal*Y1);
         B=(X1'*P'*Y1)/C;
                 
-        %compute t and sig
-        t=(m_x-B*m_y)';
+        %compute t and sig2
+        t=(m_x-B*m_y);
         diagonal1=diag(P'*ones(M,1));
-        sig=1/(N_P*D)*(trace(X1'*diagonal1*X1)-trace(X1'*P'*Y1*B'));
+        sig2=1/(N_P*D)*(trace(X1'*diagonal1*X1)-trace(X1'*P'*Y1*B'));
                         
-        NewPoints=Y*B'+ones(M,1)*t;
+        NewPoints=Y*B'+ones(M,1)*t';
     end
 end
