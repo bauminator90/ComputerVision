@@ -8,8 +8,14 @@ function [NewPoints,par1,par2,par3]=PointSetRegistration(X,Y,opt)
 %     1 is for the rigid transformation, 2 for the non-rigid.
 
 
+[X, scale_x, t_x] = normalise(X);
+[Y, scale_y, t_y] = normalise(Y);
+
+
+
 %Initialization
-w=0.5;
+
+w=0.01;
 D=size(X,2);
 N=size(X,1);
 M=size(Y,1);
@@ -22,7 +28,7 @@ sig = bsxfun(@plus, C', sig);
 sig = sum(sig(:)) / (D*N*M);
 
 R=eye(D);
-t=zeros(1,D);
+t=zeros(1,D)';
 s=1;
 
 
@@ -47,3 +53,6 @@ switch opt
         [NewPoints,G,W]=NonRigidPointSet(X,Y,D,M,N,sig,w,W,G,alpha);
 end
 
+
+
+NewPoints = bsxfun(@plus, bsxfun(@rdivide, NewPoints, scale_x), t_x);
