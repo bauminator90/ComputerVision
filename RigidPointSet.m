@@ -4,7 +4,7 @@ function [NewPoints,R,s,t]=RigidPointSet(X,Y,D,M,N,R,s,t,sig2,w)
        
         gif = 'animatedgif.gif';
     while (iter<1000) && (abs(sig2)>1e-5)
-        iter=iter+1;
+        iter=iter+1
               
         %E-Step:
 
@@ -55,22 +55,22 @@ function [NewPoints,R,s,t]=RigidPointSet(X,Y,D,M,N,R,s,t,sig2,w)
         end
         
         NewPoints=s.*Y*R'+ones(M,1)*t';
-        if (mod(iter,100)==1)
-            Nrm=normalise(X);
-            plot(Nrm(:,1),Nrm(:,2),'.r');
-            plot(NewPoints(:,1),NewPoints(:,2),'.g');
-            title( sprintf('k = %d', iter) );
-    
-            % Copy the new image in the gif.
-            frame = getframe(1);
-            new_image = frame2im(frame);
-            [ind_image,colormap] = rgb2ind(new_image,256);
-            if iter == 1
-                imwrite(ind_image,colormap,gif,'gif','LoopCount',Inf,'DelayTime',1);
-            else
-                imwrite(ind_image,colormap,gif,'gif','WriteMode','append','DelayTime',1);
-            end
-        end
+%         if (mod(iter,100)==1)
+%             Nrm=normalise(X);
+%             plot(Nrm(:,1),Nrm(:,2),'.r');
+%             plot(NewPoints(:,1),NewPoints(:,2),'.g');
+%             title( sprintf('k = %d', iter) );
+%     
+%             Copy the new image in the gif.
+%             frame = getframe(1);
+%             new_image = frame2im(frame);
+%             [ind_image,colormap] = rgb2ind(new_image,256);
+%             if iter == 1
+%                 imwrite(ind_image,colormap,gif,'gif','LoopCount',Inf,'DelayTime',1);
+%             else
+%                 imwrite(ind_image,colormap,gif,'gif','WriteMode','append','DelayTime',1);
+%             end
+%         end
     end
  
 end
